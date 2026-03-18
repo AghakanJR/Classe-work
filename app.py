@@ -1,21 +1,22 @@
 import streamlit as st
 import pandas as pd
 
-st.title("CSV File Viewer")
+st.title("Import a CSV File and visualize with Streamlit Charts")
 
 df = pd.read_csv("Datasets/trips_data_1000.csv")
-
-
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric("Number of Trips", df.shape[0])
-col2.metric("Unique Customers", df["customer_email"].nunique())
-with col3 : 
-    total_distance = df["distance"].sum() / 1000
-    st.metric("Total Distance", value=f"{total_distance:.2f} K")
-with col4:
-    average_revenue = df["revenue"].mean()
-    st.metric("Average Revenue Per Trip", value = f"{average_revenue:.2f} €")
-
 st.write("Preview Uploaded Data:")
 st.dataframe(df.head())
+
+car_brand = st.sidebar.selectbox("Select the car brand", df["car_brand"].unique())
+df = df[df["car_brand"] == car_brand]
+
+st.subheader("Customers by City")
+country_counts = df["customer_city"].value_counts()
+st.write(country_counts)
+st.bar_chart(country_counts)
+
+st.subheader("Trips Over time",)
+df["Trips Date"] = pd.to_datetime(df["pickup_time"]).dt.date
+Trips_counts= df["Trips date"].value_counts()
+st.write(Trips_counts)
+st.line_chart(Trips_counts)
